@@ -95,7 +95,14 @@ public class Factor extends JFrame {
 		submitAnswer.setEnabled(true);
 		cancelCheck.addActionListener(new ActionListener() {
 			 public void actionPerformed(ActionEvent ae) {
-			     submitAnswer.setEnabled(false);
+				 int ftTotal = ft.length;
+				 for(int i=0; i< ftTotal; i++) {
+					 if (ft[i] != null) {
+						 ft[i].stop();
+					 }
+				 }
+				 statusCounterLabel.setText("CANCELLED");
+			     submitAnswer.setEnabled(true);
 			     cancelCheck.setEnabled(false);
 			 }
 		});
@@ -113,7 +120,7 @@ public class Factor extends JFrame {
 				 ft = new FactorThread[valuesCount];
 				 for(int i=0; i< count; i++) {
 					 Long longObj1 = new Long(valArr[i]);
-						 factorThread = new FactorThread(UIPass,longObj1);
+						 factorThread = new FactorThread(UIPass,longObj1,i);
 						 ft[i] = factorThread;
 						 new Thread(factorThread).start();
 						 threadStarted++;
@@ -122,9 +129,10 @@ public class Factor extends JFrame {
 		});
 	}
 	
-	public void threadFinished(FactorThread thread, Long num, boolean prime) {
+	public void threadFinished(FactorThread thread, Long num, boolean prime, int threadId) {
 		threadFinished++;
 		numberCountLabel.setText(num.toString());
+		ft[threadId] = null;
 		if(prime == true)
 		{
 			primesFound++;
@@ -145,7 +153,7 @@ public class Factor extends JFrame {
 			timeLabel.setText("");
 		} else if (threadStarted < valuesCount){
 			 Long longObj1 = new Long(valArr[threadStarted]);
-			 factorThread = new FactorThread(UIPass,longObj1);
+			 factorThread = new FactorThread(UIPass,longObj1,threadStarted);
 			 ft[threadStarted] = factorThread;
 			 new Thread(factorThread).start();
 			 threadStarted++;

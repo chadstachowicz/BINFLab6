@@ -7,11 +7,13 @@ public class FactorThread implements Runnable {
 	volatile boolean isDone;
 	volatile Long n;
 	volatile boolean result;
+	private int threadId;
 	
-	public FactorThread(Factor quiz, Long n) {
+	public FactorThread(Factor quiz, Long n, int Id) {
 		this.ui = quiz;
 		this.n = n;
 		this.isDone = false;
+		this.threadId = Id;
 	}
 	
 	@Override
@@ -25,28 +27,34 @@ public class FactorThread implements Runnable {
 		    	System.out.println(this.n);
 		        if (this.n <= 1) {
 		            this.result = false;
-		        	System.out.println("TRUE");
+		        	//System.out.println("TRUE");
 		        	isDone = true;
 		        }
 		  
 		        // Check from 2 to n-1
 		        for (int i = 2; i < this.n; i++)
 		        {
-		            if (this.n % i == 0) {
+		            if (this.n % i == 0 && exit == false) {
 		                this.result = false;
-		        		System.out.println("FALSE" + i);
+		        		//System.out.println("FALSE" + i);
 		        		isDone = true;
 		        		break;
+		            } else if (exit == true) {
+		            	break;
 		            }
 		    	}
 		        if(isDone!= true) {
 		        	this.result = true;
-		        	System.out.println("TRUE");
+		        //	System.out.println("TRUE");
 		        	isDone = true;
 		        }
 		    }
 		}
-		ui.threadFinished(this,n,result);
+		if(!exit) {
+			ui.threadFinished(this,n,result,threadId);
+		} else {
+			System.out.println("Cancelled");
+		}
 	}
 	
 	public void stop()
