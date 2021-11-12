@@ -101,6 +101,9 @@ public class Factor extends JFrame {
 						 ft[i].stop();
 					 }
 				 }
+				 primesFound = 0;
+				 threadFinished = 0;
+				 threadStarted = 0;
 				 statusCounterLabel.setText("CANCELLED");
 			     submitAnswer.setEnabled(true);
 			     cancelCheck.setEnabled(false);
@@ -108,15 +111,18 @@ public class Factor extends JFrame {
 		});
 		submitAnswer.addActionListener(new ActionListener() {
 			 public void actionPerformed(ActionEvent ae) {
-				 Date date = new Date();
-				 primesFound = 0;
-				 timeMilli = date.getTime();
-				 submitAnswer.setEnabled(false);
-				 statusCounterLabel.setText("RUNNING");
-				 cancelCheck.setEnabled(true);
 				 valArr = answerField.getText().split(",");
 				 valuesCount = valArr.length;
 				 int count = Integer.parseInt(threadCount.getText());
+				 if(count > valuesCount) {
+					 statusCounterLabel.setText("THREAD CT > VALS");
+				 } else {
+					 Date date = new Date();
+					 primesFound = 0;
+					 timeMilli = date.getTime();
+					 submitAnswer.setEnabled(false);
+					 statusCounterLabel.setText("RUNNING");
+					 cancelCheck.setEnabled(true);
 				 ft = new FactorThread[valuesCount];
 				 for(int i=0; i< count; i++) {
 					 Long longObj1 = new Long(valArr[i]);
@@ -124,6 +130,7 @@ public class Factor extends JFrame {
 						 ft[i] = factorThread;
 						 new Thread(factorThread).start();
 						 threadStarted++;
+				 }
 				 }
 			 }
 		});
@@ -150,7 +157,8 @@ public class Factor extends JFrame {
 			timeLabel.setText(runtime.toString());
 			threadFinished = 0;
 			threadStarted = 0;
-			timeLabel.setText("");
+			primesFound = 0;
+			primesFoundLabel.setText("");
 		} else if (threadStarted < valuesCount){
 			 Long longObj1 = new Long(valArr[threadStarted]);
 			 factorThread = new FactorThread(UIPass,longObj1,threadStarted);
